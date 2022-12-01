@@ -15,4 +15,4 @@ def getDF(path):
   return pd.DataFrame.from_dict(df, orient='index')
 
 df = getDF('data\\reviews_Cell_Phones_and_Accessories_5.json.gz')
-df.to_csv('data\\reviews.csv',index=False)
+df.to_parquet('data\\reviews.parquet',index=False)

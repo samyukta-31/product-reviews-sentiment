@@ -1,11 +1,13 @@
 import pandas as pd
-import spacy
+import nltk
+from nltk.tokenize import word_tokenize
 
-nlp = spacy.load("en_core_web_sm")
-reviews = pd.read_csv('data\\reviews.csv', converters={'helpful': pd.eval})
+nltk.download('punkt')
+reviews = pd.read_csv('data\\reviews.csv')
 
 reviews.info()
-print(reviews[reviews['reviewText']==''])
-reviews["reviewTokens"] = reviews["reviewText"].apply(lambda x: nlp.tokenizer(x))
 
-reviews.head(10)
+reviews["reviewText"] = reviews["reviewText"].astype('str')
+reviews["reviewTokens"] = reviews["reviewText"].apply(word_tokenize)
+
+# reviews.head(10)
