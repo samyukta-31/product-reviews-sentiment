@@ -18,9 +18,9 @@ https://jmcauley.ucsd.edu/data/amazon/
 6. Prediction would be overall sentiment of that category
 
 
-### After installing spacy, run the following on command line
+### Dependencies
 
 ```
-python -m spacy download en_core_web_lg
-python -m spacy download en_core_web_sm
+pandas==1.4.2
+nltk==3.7
 ```
