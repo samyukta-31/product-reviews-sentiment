@@ -1,26 +1,33 @@
 # product-reviews-sentiment
 Finding the most impactful features determining sentiment of Amazon Cell Phones and Accessories reviews
 
-## Researching a Topic-based approach to Sentiment Analysis using Graphs for product reviews
+## How to execute this Program
+
+### Dependencies
+
+```
+pandas==1.4.2
+nltk==3.7
+```
+### Run
+Open bash command line and run the following
+
+```
+.\run.sh
+```
+
+## Concept: Researching a Topic-based approach to Sentiment Analysis using Graphs for product reviews
 
 ### Data Source
 https://jmcauley.ucsd.edu/data/amazon/ 
 
-### Steps following throughout this research
+### Steps followed to pursue this research
 
-1. Two approaches to create categories
-    - Topic modelling of reviews
-    - Topic modelling of individuals clusters
-2. Topic modelling of individual clusters
-3. Preferred category is taken as dynamic user input
-4. Graph-based sentiment analysis with chosen category as central node
-5. Calculation of sentiment score based on associated nodes (binary classification)
-6. Prediction would be overall sentiment of that category
-
-
-### After installing spacy, run the following on command line
-
-```
-python -m spacy download en_core_web_lg
-python -m spacy download en_core_web_sm
-```
+1. Preprocessing of reviews and converting to bigrams
+2. Clustering of all tokens
+2. Topic modelling of individual clusters - collection of topics is kept as corpus for user input categories
+3. Preferred category is taken as dynamic user input via API
+4. Network Graph is created based on bigram occurances as weights and bigrams as nodes
+5. Graph-based sentiment analysis with chosen category as central node
+6. Calculation of sentiment score based on associated nodes (binary classification)
+7. Prediction would be overall sentiment of that category
