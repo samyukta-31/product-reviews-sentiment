@@ -39,13 +39,13 @@ reviews["reviewTokens"] = reviews["reviewTokens"].apply(lambda x: ' '.join([word
 reviews["reviewTokens"] = reviews["reviewTokens"].apply(lambda a: lemmatizer.lemmatize(a))
 
 # Split the words in each review into a list of words by tokenization
-reviews["reviewTokens"] = reviews["reviewTokens"].apply(word_tokenize)
+# reviews["reviewTokens"] = reviews["reviewTokens"].apply(word_tokenize)
 
-# Combine words occuring together as bigrams in a last for each review
-reviews['reviewTokens_bigrams'] = reviews["reviewTokens"].apply(lambda row: list(nltk.ngrams(row, 2))) 
+# # Combine words occuring together as bigrams in a last for each review
+# reviews['reviewTokens_bigrams'] = reviews["reviewTokens"].apply(lambda row: list(nltk.ngrams(row, 2))) 
 
-# Combine words occuring together as unigrams in a last for each review
-reviews['reviewTokens_unigrams'] = reviews["reviewTokens"].apply(lambda row: list(nltk.ngrams(row, 1))) 
+# # Combine words occuring together as unigrams in a last for each review
+# reviews['reviewTokens_unigrams'] = reviews["reviewTokens"].apply(lambda row: list(nltk.ngrams(row, 1))) 
 
 # Save preprocessed file with reviewTokens column to parquet file
 reviews.to_parquet("data\\reviews_preprocessed.parquet")
