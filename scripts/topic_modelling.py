@@ -8,55 +8,92 @@ import re
 import string
 import nltk
 from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.decomposition import LatentDirichletAllocation
+import gensim
+import gensim.corpora as corpora
+
+nltk.download('averaged_perceptron_tagger')
 
 # read the data
 df = pd.read_parquet('data\\reviews_clustered.parquet')
 
-# Create tfidf vectorizer object
-vectorizer = TfidfVectorizer()
-
-# perform topic modelling for reviewTokens in each cluster
-
 # making sub-dataframes for each cluster
 cluster0 = df[df['cluster'] == 0]
-cluster1 = df[df['cluster'] == 1]
-cluster2 = df[df['cluster'] == 2]
-cluster3 = df[df['cluster'] == 3]
+# cluster1 = df[df['cluster'] == 1]
+# cluster2 = df[df['cluster'] == 2]
+# cluster3 = df[df['cluster'] == 3]
 
-# Create tfidf matrix
-clust0_vect = vectorizer.fit_transform(cluster0["reviewTokens"])
-clust1_vect = vectorizer.fit_transform(cluster1["reviewTokens"])
-clust2_vect = vectorizer.fit_transform(cluster2["reviewTokens"])
-clust3_vect = vectorizer.fit_transform(cluster3["reviewTokens"])
+data = cluster0.reviewTokens.values.tolist()
 
-# Create LDA object
-lda = LatentDirichletAllocation(n_components=2, random_state=0)
+# Remove new line characters
+data = [re.sub('\s+', ' ', sent) for sent in data]
 
-# Fit LDA object to tfidf matrix
-clust0_lda = lda.fit_transform(clust0_vect)
-clust1_lda = lda.fit_transform(clust1_vect)
-clust2_lda = lda.fit_transform(clust2_vect)
-clust3_lda = lda.fit_transform(clust3_vect)
+# Remove distracting single quotes
+data = [re.sub("\'", "", sent) for sent in data]
 
-# Create cluster column in dataframe
-# cluster0["topic"] = clust0_lda.argmax(axis=1)
-# cluster1["topic"] = clust1_lda.argmax(axis=1)
-# cluster2["topic"] = clust2_lda.argmax(axis=1)
-# cluster3["topic"] = clust3_lda.argmax(axis=1)
+# Remove filler words
+data = [re.sub("like", "", sent) for sent in data]
+data = [re.sub("would", "", sent) for sent in data]
+data = [re.sub("get", "", sent) for sent in data]
+data = [re.sub("one", "", sent) for sent in data]
+data = [re.sub("really", "", sent) for sent in data]
+data = [re.sub("even", "", sent) for sent in data]
+data = [re.sub("also", "", sent) for sent in data]
+data = [re.sub("much", "", sent) for sent in data]
+data = [re.sub("good", "", sent) for sent in data]
+data = [re.sub("great", "", sent) for sent in data]
+data = [re.sub("well", "", sent) for sent in data]
+data = [re.sub("dont", "", sent) for sent in data]
+data = [re.sub("make", "", sent) for sent in data]
+data = [re.sub("made", "", sent) for sent in data]
 
-# print(cluster0['topic'].head(5))
+# Remove punctuation
+data = [re.sub('[%s]' % re.escape(string.punctuation), '', sent) for sent in data]
 
+# Remove numbers
+data = [re.sub('\w*\d\w*', '', sent) for sent in data]
 
-def display_topics(model, feature_names):
-    for topic_idx, topic in enumerate(model.components_):
-        print(f"Topic {topic_idx}:")
-        print(" ".join([feature_names[i]
-                        for i in topic.argsort()[:-2 - 1:-1]]))
+# Remove extra spaces
+data = [re.sub(' +', ' ', sent) for sent in data]
 
+# Split each sentence into words
+data = [sent.split() for sent in data]
 
-# display_topics(clust0_lda, clust0_vect.get_feature_names())
-# 
+# Remove words with length less than 3
+data = [[word for word in sent if len(word) > 2] for sent in data]
 
+# remove adjective, verbs and adverbs
+data = [[word for word in sent if 
+             nltk.pos_tag([word])[0][1] != 'JJ' 
+         and nltk.pos_tag([word])[0][1] != 'JJR' 
+         and nltk.pos_tag([word])[0][1] != 'JJS' 
+         and nltk.pos_tag([word])[0][1] != 'RB' 
+         and nltk.pos_tag([word])[0][1] != 'RBR' 
+         and nltk.pos_tag([word])[0][1] != 'RBS' 
+         and nltk.pos_tag([word])[0][1] != 'VBP'
+         and nltk.pos_tag([word])[0][1] != 'VBD'
+         and nltk.pos_tag([word])[0][1] != 'VBN'
+         ] for sent in data]
 
+# Create Dictionary
+id2word = corpora.Dictionary(data)
 
+# Create Corpus
+texts = data
+
+# Term Document Frequency
+corpus = [id2word.doc2bow(text) for text in texts]
+
+# number of topics
+num_topics = 2
+
+# Build LDA model
+lda_model = gensim.models.ldamodel.LdaModel(corpus=corpus,
+                                             id2word=id2word,
+                                                num_topics=num_topics,
+                                                random_state=0)
+
+# print the topics with largest weights
+print(lda_model.print_topics())
+
+# save the model
+lda_model.save('models\\lda_model.model')
