@@ -1,5 +1,6 @@
 import gensim 
 import pandas as pd
+from transformers import pipeline
 
 df = pd.read_parquet('data\\reviews_clustered.parquet')
 
@@ -21,5 +22,21 @@ for i in range(0,4):
             if topic_word not in individual_topics:
                 individual_topics.append(topic_word)
     print(f'Cluster {i}: {individual_topics}')
+
+    # Find sentiment for reviews corresponding to each topic
+    for topic in individual_topics:
+        topic_reviews = cluster0[cluster0['reviewTokens'].str.contains(topic)]
+        topic_reviews = topic_reviews[['reviewText', 'reviewTokens']]
+
+        # sentiment analysis using huggingface BERT
+        sentiment_analysis = pipeline('sentiment-analysis')
+        
+        topic_reviews['sentiment'] = topic_reviews['reviewText'].apply(lambda x: sentiment_analysis(x[:513])[0]['label'])
+
+        # Visualize sentiment
+        print(topic)
+        print(topic_reviews['sentiment'].value_counts())
+        print('\n')
+
 
     
