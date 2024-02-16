@@ -51,27 +51,28 @@ https://jmcauley.ucsd.edu/data/amazon/
 
 ### Step-wise project details
 
-1. General preprocessing of reviews following
-    a. Lowercase conversion
-    b. Lemmatisation
-    c. Stop work removal
-    d. Punctuation removal
+* General preprocessing of reviews following
+   * Lowercase conversion
+   * Lemmatisation
+   * Stop work removal
+   * Punctuation removal
 
-2. Vectorizing using TfIdf for Clustering
+* Vectorizing using TfIdf for Clustering
 
-2. Clustering using KMeans into 4 clusters
+* Clustering using KMeans into 4 clusters
 
-3. Pre-processing prior to topic modelling
-    a. Removal of new-line characters
-    b. Removal of quotation marks
-    c. Removal of filler words
-    d. Removal of numbers
-    e. Removal of extra spaces
-    f. Removal of words with less than 3 letters
+* Pre-processing prior to topic modelling
+   * Removal of new-line characters
+   * Removal of quotation marks
+   * Removal of filler words
+   * Removal of numbers
+   * Removal of extra spaces
+   * Removal of words with less than 3 letters
 
-4. Training LDA model for each cluster to get the predominant topics for that topic
+* Training LDA model for each cluster to get the predominant topics for that topic
+
 image.png
 
-5. Performing sentiment analysis for each cluster to understand the sentiment associated with said topics
+* Performing sentiment analysis for each cluster to understand the sentiment associated with said topics
 
 
